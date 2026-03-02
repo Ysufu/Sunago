@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunago. — Warung Kopi Cikampek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;600;700&family=Noto+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Warung Sunago<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">Tentang</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#gallery">Galeri</a></li>
+      <li><a href="spots/spot-foto-SUPABASE-SUPABASE.html">Spot Foto</a></li>
+      <li><a href="#testimoni">Review</a></li>
+      <li><a href="#info">Lokasi</a></li>
+    </ul>
+    <a href="https://www.instagram.com/warungkopi.sunago" target="_blank" class="nav-ig">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      @warungkopi.sunago
+    </a>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="mobileClose">✕</button>
+    <a href="#about">Tentang</a>
+    <a href="#menu">Menu</a>
+    <a href="#gallery">Galeri</a>
+    <a href="spots/spot-foto-SUPABASE.html">Spot Foto</a>
+    <a href="#testimoni">Review</a>
+    <a href="#info">Lokasi</a>
+    <a href="https://www.instagram.com/warungkopi.sunago" target="_blank">Instagram</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="steam-container">
+      <div class="steam"></div><div class="steam"></div><div class="steam"></div>
+    </div>
+    <div class="coffee-cup-decor">☕</div>
+    <div class="hero-eyebrow">Warung Kopi · Cikampek</div>
+    <h1 class="hero-title">Tempat<em>Ngopi<span class="hero-period">.</span></em>Terbaik</h1>
+    <p class="hero-subtitle">Kopi berkualitas, harga bersahabat, dan suasana yang bikin kamu betah berlama-lama.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Lihat Menu</a>
+      <a href="spots/spot-foto-SUPABASE.html" class="btn-ghost"><span>📸</span> Spot Foto</a>
+    </div>
+    <div class="hero-location">
+      <span class="loc-label">Berlokasi di</span>
+      <span class="loc-text">Cikampek, Karawang</span>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <div class="ticker-item"><span class="ticker-dot"></span>Latte · Mocha · Butterscotch</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Mulai Rp 14.000</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Spot Foto Aesthetic</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>WiFi Gratis</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Live Music Weekend</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Buka Setiap Hari</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Latte · Mocha · Butterscotch</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Mulai Rp 14.000</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Spot Foto Aesthetic</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>WiFi Gratis</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Live Music Weekend</div>
+      <div class="ticker-item"><span class="ticker-dot"></span>Buka Setiap Hari</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-content reveal">
+      <div class="about-label">Tentang Kami</div>
+      <h2 class="about-heading">Secangkir <em>Kopi,</em><br>Sejuta Cerita</h2>
+      <p class="about-text">Sunago hadir sebagai ruang ketiga — tempat santai di antara rumah dan kantor. Nikmati kopi berkualitas yang diseduh langsung oleh barista kami dengan cita rasa yang konsisten dan harga yang ramah di kantong.</p>
+      <p class="about-text">Dari Latte yang smooth hingga Butterscotch yang karamel legit, setiap tegukan kami buat dengan sepenuh hati untuk pengalaman ngopi terbaikmu di Cikampek.</p>
+      <div class="about-stats">
+        <div class="stat-item"><span class="stat-num">6+</span><span class="stat-label">Varian Kopi</span></div>
+        <div class="stat-item"><span class="stat-num">Rp14rb</span><span class="stat-label">Mulai Dari</span></div>
+        <div class="stat-item"><span class="stat-num">⭐ 5</span><span class="stat-label">Rating</span></div>
+      </div>
+    </div>
+    <div class="about-visual reveal">
+      <div class="about-card">
+        <div class="about-card-glow"></div>
+        <div class="about-decor-line"></div>
+        <div class="about-decor-line2"></div>
+        <div class="about-card-badge">🌟 Favorit Warga Cikampek</div>
+        <div class="about-card-title">Kopi yang<br>Bikin Kangen</div>
+        <div class="about-card-desc">"Sekali coba, susah buat berhenti balik lagi..."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="section-header reveal">
+      <div class="section-label">Menu Kami</div>
+      <h2 class="section-title">Racikan <em>Terbaik</em> Kami</h2>
+    </div>
+
+    <div class="menu-board reveal">
+      <div class="menu-board-header">
+        <span class="menu-board-icon">☕</span>
+        <h3 class="menu-board-title">Coffee Selection</h3>
+        <p class="menu-board-sub">Tersedia Hot &amp; Iced</p>
+      </div>
+      <div class="menu-board-items">
+        <div class="menu-board-item">
+          <div class="mbi-left">
+            <span class="mbi-name">Latte</span>
+            <span class="mbi-desc">Espresso dengan steamed milk — creamy, smooth, sempurna</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 15.000</span>
+        </div>
+        <div class="menu-board-item featured">
+          <div class="mbi-badge">⭐ Best Seller</div>
+          <div class="mbi-left">
+            <span class="mbi-name">Mocha</span>
+            <span class="mbi-desc">Espresso + coklat + susu — manis pahit yang perfectly balanced</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 16.000</span>
+        </div>
+        <div class="menu-board-item">
+          <div class="mbi-left">
+            <span class="mbi-name">Butterscotch</span>
+            <span class="mbi-desc">Kopi dengan sirup butterscotch karamel yang legit dan hangat</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 17.000</span>
+        </div>
+        <div class="menu-board-item">
+          <div class="mbi-left">
+            <span class="mbi-name">Americano</span>
+            <span class="mbi-desc">Espresso shots dengan air — bold, clean, no bullshit</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 14.000</span>
+        </div>
+        <div class="menu-board-item featured">
+          <div class="mbi-badge">🔥 Favorit</div>
+          <div class="mbi-left">
+            <span class="mbi-name">Kopi Susu</span>
+            <span class="mbi-desc">Kopi robusta lokal + susu segar — klasik yang selalu bikin nagih</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 15.000</span>
+        </div>
+        <div class="menu-board-item">
+          <div class="mbi-left">
+            <span class="mbi-name">Hazelnut</span>
+            <span class="mbi-desc">Espresso dengan sirup hazelnut — nutty, aromatic, beda dari biasa</span>
+          </div>
+          <div class="mbi-dots"></div>
+          <span class="mbi-price">Rp 16.000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-sub-grid">
+      <div class="menu-sub-card reveal">
+        <div class="menu-sub-header"><span>🧋</span><h4>Non-Coffee</h4></div>
+        <div class="menu-sub-items">
+          <div class="msi-row"><span>Matcha Latte</span><span>~Rp 15.000</span></div>
+          <div class="msi-row"><span>Teh Tarik</span><span>~Rp 8.000</span></div>
+          <div class="msi-row"><span>Es Coklat</span><span>~Rp 10.000</span></div>
+          <div class="msi-row"><span>Susu Segar</span><span>~Rp 8.000</span></div>
+        </div>
+        <div class="menu-sub-note">* Harga estimasi · konfirmasi ke kasir</div>
+      </div>
+      <div class="menu-sub-card reveal">
+        <div class="menu-sub-header"><span>🍽️</span><h4>Makanan & Camilan</h4></div>
+        <div class="menu-sub-items">
+          <div class="msi-row"><span>Indomie Goreng / Kuah</span><span>~Rp 10.000</span></div>
+          <div class="msi-row"><span>Nasi Goreng</span><span>~Rp 15.000</span></div>
+          <div class="msi-row"><span>Roti Bakar</span><span>~Rp 10.000</span></div>
+          <div class="msi-row"><span>Pisang Goreng</span><span>~Rp 8.000</span></div>
+        </div>
+        <div class="menu-sub-note">* Harga estimasi · konfirmasi ke kasir</div>
+      </div>
+    </div>
+
+    <div class="menu-cta reveal">
+      <p>Menu & harga bisa update sewaktu-waktu. Cek info terbaru di Instagram!</p>
+      <a href="https://www.instagram.com/warungkopi.sunago" target="_blank" class="btn-primary">Cek Instagram Kami</a>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="section-header reveal">
+      <div class="section-label">Galeri</div>
+      <h2 class="section-title">Suasana <em>Sunago</em></h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal gi-big">
+        <img src="images/4.png" alt="Best Foto Spot Sunago" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="gallery-overlay"><span>Best Foto Spot</span></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/1.png" alt="Indoor Sunago" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="gallery-overlay"><span>Indoor — Ruang Tamu</span></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/3.png" alt="Spot Foto Retro Sunago" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="gallery-overlay"><span>Spot Foto Retro</span></div>
+      </div>
+      <div class="gallery-item reveal gi-wide">
+        <img src="images/5.png" alt="Outdoor Sunago" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="gallery-overlay"><span>Area Outdoor</span></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/2.png" alt="Indoor Dinding Artistik Sunago" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="gallery-overlay"><span>Indoor — Dinding Artistik</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOT FOTO / SELFIE SECTION -->
+  <section id="foto">
+    <div class="section-header reveal">
+      <div class="section-label">📸 Spot Foto</div>
+      <h2 class="section-title">Frame <em>Instagrammu</em><br>di Sini!</h2>
+    </div>
+    <p class="section-desc reveal">Banyak sudut aesthetic di Sunago yang siap bikin feed IG kamu makin kece. Yuk abadikan momenmu!</p>
+
+    <div class="foto-grid">
+      <a href="spots/spot-foto-SUPABASE.html" class="foto-card reveal" style="text-decoration:none;display:block;">
+        <div class="foto-frame frame-1">
+          <div class="foto-scene">
+            <div class="foto-person">🧑‍🤝‍🧑</div>
+            <div class="foto-props"><div class="foto-cup cup-1">☕</div><div class="foto-cup cup-2">☕</div></div>
+          </div>
+          <div class="foto-tag">#SunagoCikampek</div>
+        </div>
+        <div class="foto-info">
+          <h4 class="foto-spot-name">Gallery pengunjung <span style="color:var(--gold);font-size:0.8rem">→</span></h4>
+          <p class="foto-spot-desc">Kenangan untuk para pengunjung warung sunago.</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="tag-us-cta reveal">
+      <div class="tag-us-inner">
+        <div class="tag-us-icon">📸</div>
+        <div class="tag-us-text">
+          <h3>Share Fotomu!</h3>
+          <p>Tag <strong>@warungkopi.sunago</strong> dan pakai <strong>#SunagoCikampek</strong> — foto terbaik bisa di-repost oleh kami!</p>
+        </div>
+        <a href="https://www.instagram.com/warungkopi.sunago" target="_blank" class="btn-primary">Tag Kami di IG</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONI -->
+  <section id="testimoni">
+    <div class="section-header reveal">
+      <div class="section-label">Kata Mereka</div>
+      <h2 class="section-title">Review <em>Pelanggan</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Butterscotch-nya edan enak! Pertama kali nyobain langsung jatuh cinta. Tempatnya cozy banget buat kerja atau nongkrong sore.</p>
+        <div class="testi-author"><div class="testi-avatar">😊</div><div><span class="testi-name">Rizky A.</span><span class="testi-stars">★★★★★</span></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Kopi susunya bikin nagih! Harga cuma 15 ribu tapi rasanya cafe beneran. Spot fotonya juga bagus, langsung upload ke IG!</p>
+        <div class="testi-author"><div class="testi-avatar">🙋</div><div><span class="testi-name">Sari M.</span><span class="testi-stars">★★★★★</span></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Mocha-nya top banget, pas antara kopi dan coklat. Tiap weekend pasti ke sini nonton live music sambil ngopi. Recommended!</p>
+        <div class="testi-author"><div class="testi-avatar">👨</div><div><span class="testi-name">Budi S.</span><span class="testi-stars">★★★★★</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section id="info">
+    <div class="info-block reveal">
+      <h3 class="info-title">Jam Operasional</h3>
+      <ul class="hours-list">
+        <li class="hours-item"><span class="hours-day">Senin – Jumat</span><span class="hours-time">07.00 – 23.00</span></li>
+        <li class="hours-item"><span class="hours-day">Sabtu</span><span class="hours-time">07.00 – 00.00</span></li>
+        <li class="hours-item"><span class="hours-day">Minggu</span><span class="hours-time">08.00 – 22.00</span></li>
+      </ul>
+      <div class="status-bar"><span class="hours-status status-open">● Buka</span><span>Warung kami sedang buka sekarang!</span></div>
+    </div>
+    <div class="info-block reveal">
+      <h3 class="info-title">Hubungi Kami</h3>
+      <div class="contact-item"><span class="contact-icon">📍</span><div><span class="contact-label">Lokasi</span><span class="contact-value">Cikampek, Karawang, Jawa Barat</span></div></div>
+      <div class="contact-item"><span class="contact-icon">📸</span><div><span class="contact-label">Instagram</span><span class="contact-value"><a href="https://www.instagram.com/warungkopi.sunago" target="_blank">@warungkopi.sunago</a></span></div></div>
+      <div class="contact-item"><span class="contact-icon">🎬</span><div><span class="contact-label">TikTok</span><span class="contact-value"><a href="https://www.tiktok.com/@warungkopi.sunago" target="_blank">@warungkopi.sunago</a></span></div></div>
+      <div class="contact-item"><span class="contact-icon">✨</span><div><span class="contact-label">Fasilitas</span><span class="contact-value">WiFi Gratis · Parkir Luas · Spot Foto Aesthetic · Live Music Weekend</span></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Sunago<span>.</span></div>
+        <div class="footer-tagline">Warung kopi yang bikin kangen — Cikampek</div>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/warungkopi.sunago" target="_blank">Instagram</a>
+          <span>·</span>
+          <a href="https://www.tiktok.com/@warungkopi.sunago" target="_blank">TikTok</a>
+        </div>
+      </div>
+      <div class="footer-copy">© 2025 Warung Kopi Sunago<br>Cikampek, Karawang · Jawa Barat</div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTop">↑</button>
+
+  <!-- AI AGENT -->
+  <div class="ai-widget" id="aiWidget">
+    <button class="ai-toggle" id="aiToggle">
+      <span class="ai-toggle-icon">☕</span>
+      <span class="ai-toggle-label">Tanya Suna!</span>
+    </button>
+    <div class="ai-panel" id="aiPanel">
+      <div class="ai-header">
+        <div class="ai-header-info">
+          <div class="ai-avatar-sm">☕</div>
+          <div>
+            <div class="ai-name">Suna — AI Assistant</div>
+            <div class="ai-status"><span class="ai-dot"></span>Online sekarang</div>
+          </div>
+        </div>
+        <button class="ai-close" id="aiClose">✕</button>
+      </div>
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg bot">
+          <div class="ai-bubble">Halo! Saya <strong>Suna</strong>, asisten virtual Warung Kopi Sunago ☕<br><br>Mau tanya soal menu, harga, lokasi, atau spot foto? Tanya aja!</div>
+        </div>
+        <div class="ai-quick-replies" id="quickReplies">
+          <button class="quick-btn">Menu kopi apa aja?</button>
+          <button class="quick-btn">Latte harganya berapa?</button>
+          <button class="quick-btn">Jam berapa buka?</button>
+          <button class="quick-btn">Ada spot foto?</button>
+        </div>
+      </div>
+      <div class="ai-typing" id="aiTyping" style="display:none"><span></span><span></span><span></span></div>
+      <div class="ai-input-area">
+        <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pesanmu...">
+        <button class="ai-send" id="aiSend">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/agent.js"></script>
+</body>
+</html>

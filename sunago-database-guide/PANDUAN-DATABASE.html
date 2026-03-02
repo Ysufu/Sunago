@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Database — Kenangan Sunago</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;600;700;800&family=Noto+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f5ede0; --gold: #d4a853; --caramel: #c8813a;
+      --espresso: #1a0d05; --brown-mid: #5c3317; --brown-light: #7a4522;
+      --green: #2d6a4f; --blue: #1a4a7a; --surface: #221508;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--espresso); color: var(--cream); font-family: 'Syne', sans-serif; line-height: 1.6; }
+
+    /* NAV */
+    nav { position: sticky; top:0; z-index:100; background: rgba(26,13,5,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(245,237,224,0.08); padding: 1rem 3rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; color: var(--gold); }
+    .nav-logo em { color: var(--cream); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: var(--cream); text-decoration: none; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.55; transition: opacity 0.2s; }
+    .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+    /* HERO */
+    .hero { padding: 5rem 3rem 4rem; max-width: 900px; margin: 0 auto; text-align: center; }
+    .hero-badge { display: inline-block; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.25); color: var(--gold); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 50px; margin-bottom: 1.5rem; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1rem; }
+    .hero h1 em { color: var(--caramel); font-style: italic; }
+    .hero p { font-family: 'Noto Serif', serif; font-style: italic; font-size: 1rem; opacity: 0.6; max-width: 580px; margin: 0 auto 3rem; }
+
+    /* COMPARISON TABLE */
+    .compare-wrap { max-width: 900px; margin: 0 auto 5rem; padding: 0 3rem; }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th { padding: 1rem 1.5rem; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; text-align: left; }
+    .compare-table th:first-child { color: var(--cream); opacity: 0.4; }
+    .th-firebase { background: rgba(255,160,0,0.08); border-radius: 8px 8px 0 0; color: #FFA000; }
+    .th-supabase { background: rgba(62,207,142,0.08); border-radius: 8px 8px 0 0; color: #3ECF8E; }
+    .compare-table td { padding: 0.85rem 1.5rem; font-size: 0.82rem; border-bottom: 1px solid rgba(245,237,224,0.05); vertical-align: top; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:nth-child(2) { background: rgba(255,160,0,0.04); }
+    .compare-table td:nth-child(3) { background: rgba(62,207,142,0.04); }
+    .badge-good { display: inline-block; background: rgba(45,106,79,0.2); border: 1px solid rgba(45,106,79,0.4); color: #6fcf97; font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 50px; margin-left: 0.4rem; }
+    .badge-ok { display: inline-block; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.3); color: var(--gold); font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 50px; margin-left: 0.4rem; }
+    .verdict { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .verdict-card { flex: 1; border-radius: 8px; padding: 1.2rem 1.5rem; }
+    .verdict-firebase { background: rgba(255,160,0,0.06); border: 1px solid rgba(255,160,0,0.2); }
+    .verdict-supabase { background: rgba(62,207,142,0.06); border: 1px solid rgba(62,207,142,0.2); }
+    .verdict-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6; margin-bottom: 0.4rem; }
+    .verdict-title { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.3rem; }
+    .verdict-sub { font-size: 0.75rem; opacity: 0.55; font-family: 'Noto Serif', serif; font-style: italic; }
+
+    /* SECTION */
+    .section { max-width: 900px; margin: 0 auto 5rem; padding: 0 3rem; }
+    .section-header { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(245,237,224,0.08); }
+    .section-icon { font-size: 1.8rem; }
+    .section-eyebrow { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; opacity: 0.5; margin-bottom: 0.2rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+    .section-title em { color: var(--caramel); font-style: italic; }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; gap: 1rem; }
+    .step { display: flex; gap: 1.2rem; align-items: flex-start; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
+    .step-num.firebase { background: rgba(255,160,0,0.15); color: #FFA000; border: 1px solid rgba(255,160,0,0.3); }
+    .step-num.supabase { background: rgba(62,207,142,0.15); color: #3ECF8E; border: 1px solid rgba(62,207,142,0.3); }
+    .step-body {}
+    .step-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.3rem; }
+    .step-desc { font-size: 0.8rem; opacity: 0.6; font-family: 'Noto Serif', serif; font-style: italic; line-height: 1.6; }
+    .step-desc a { color: var(--gold); }
+
+    /* CODE BLOCK */
+    .code-block { background: #0d0a05; border: 1px solid rgba(245,237,224,0.08); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+    .code-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; border-bottom: 1px solid rgba(245,237,224,0.06); background: rgba(245,237,224,0.02); }
+    .code-lang { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.4; }
+    .code-copy { background: none; border: 1px solid rgba(245,237,224,0.1); color: var(--cream); font-size: 0.62rem; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+    .code-copy:hover { border-color: var(--gold); color: var(--gold); }
+    pre { padding: 1.2rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.7; }
+    .c-comment { color: #5a6a7a; }
+    .c-key { color: #79b8ff; }
+    .c-str { color: #9ecbff; }
+    .c-val { color: #f97583; }
+    .c-fn { color: #b392f0; }
+    .c-gold { color: var(--gold); }
+
+    /* NOTE BOX */
+    .note { background: rgba(212,168,83,0.06); border: 1px solid rgba(212,168,83,0.18); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0; padding: 1rem 1.2rem; margin: 1.2rem 0; font-size: 0.8rem; line-height: 1.6; }
+    .note strong { color: var(--gold); }
+    .warn { background: rgba(200,60,60,0.06); border-color: #e06060; border-left-color: #e06060; }
+    .warn strong { color: #e06060; }
+    .info { background: rgba(100,150,255,0.06); border-color: #6496ff; border-left-color: #6496ff; }
+    .info strong { color: #6496ff; }
+
+    /* FILE LIST */
+    .file-tree { background: #0d0a05; border: 1px solid rgba(245,237,224,0.08); border-radius: 8px; padding: 1.2rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 2; }
+    .ft-dir { color: var(--gold); }
+    .ft-file { color: var(--cream); opacity: 0.7; }
+    .ft-new { color: #6fcf97; }
+    .ft-note { color: #5a6a7a; margin-left: 1rem; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid rgba(245,237,224,0.06); margin: 4rem 3rem; }
+
+    /* QUICK REF */
+    .quick-ref { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .qr-card { background: var(--surface); border: 1px solid rgba(245,237,224,0.06); border-radius: 8px; padding: 1.2rem; }
+    .qr-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; display: block; }
+    .qr-item { font-size: 0.78rem; opacity: 0.65; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .qr-item::before { content: '→'; color: var(--gold); font-size: 0.7rem; }
+
+    footer { border-top: 1px solid rgba(245,237,224,0.06); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; opacity: 0.4; font-size: 0.72rem; }
+
+    @media(max-width:700px) {
+      nav { padding: 1rem 1.5rem; } .nav-links { display: none; }
+      .hero, .compare-wrap, .section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .divider { margin: 3rem 1.5rem; }
+      .verdict { flex-direction: column; }
+      .quick-ref { grid-template-columns: 1fr; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Sunago<em>.</em> — DB Guide</div>
+  <div class="nav-links">
+    <a href="#compare">Perbandingan</a>
+    <a href="#firebase">Firebase</a>
+    <a href="#supabase">Supabase</a>
+    <a href="#deploy">Deploy</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Panduan Database · Kenangan Sunago</div>
+  <h1>Firebase vs<br><em>Supabase</em></h1>
+  <p>Dua pilihan database gratis yang siap pakai untuk menyimpan foto kenangan pengunjung Sunago secara permanen di server sungguhan.</p>
+</div>
+
+<!-- COMPARISON -->
+<div class="compare-wrap" id="compare">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="th-firebase">🔥 Firebase</th>
+        <th class="th-supabase">⚡ Supabase</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dibuat oleh</td>
+        <td>Google</td>
+        <td>Open source (PostgreSQL)</td>
+      </tr>
+      <tr>
+        <td>Gratis selamanya?</td>
+        <td>Ya, Spark plan <span class="badge-good">✓ gratis</span></td>
+        <td>Ya, Free tier <span class="badge-good">✓ gratis</span></td>
+      </tr>
+      <tr>
+        <td>Storage foto gratis</td>
+        <td>5 GB</td>
+        <td>1 GB</td>
+      </tr>
+      <tr>
+        <td>Database gratis</td>
+        <td>1 GB (Firestore)</td>
+        <td>500 MB (PostgreSQL)</td>
+      </tr>
+      <tr>
+        <td>Realtime update</td>
+        <td>✅ Bawaan (onSnapshot)</td>
+        <td>✅ Bawaan (channel subscribe)</td>
+      </tr>
+      <tr>
+        <td>Kemudahan setup</td>
+        <td>⭐⭐⭐⭐ Sangat mudah</td>
+        <td>⭐⭐⭐⭐ Sangat mudah</td>
+      </tr>
+      <tr>
+        <td>Cocok untuk</td>
+        <td>Project cepat, pakai ekosistem Google</td>
+        <td>Project yang butuh SQL / lebih transparan</td>
+      </tr>
+      <tr>
+        <td>Lihat data via dashboard</td>
+        <td>Firebase Console (UI bagus)</td>
+        <td>Supabase Table Editor (seperti spreadsheet)</td>
+      </tr>
+      <tr>
+        <td>File kode yang diubah</td>
+        <td><code>versi-firebase/spot-foto.html</code></td>
+        <td><code>versi-supabase/spot-foto.html</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="verdict">
+    <div class="verdict-card verdict-firebase">
+      <div class="verdict-label">🔥 Firebase — Pilih ini jika...</div>
+      <div class="verdict-title">Mau yang paling simpel & cepat</div>
+      <div class="verdict-sub">Setup 10 menit, storage lebih besar (5GB gratis), realtime bawaan Google. Recommended untuk pemula.</div>
+    </div>
+    <div class="verdict-card verdict-supabase">
+      <div class="verdict-label">⚡ Supabase — Pilih ini jika...</div>
+      <div class="verdict-title">Mau lihat data seperti spreadsheet</div>
+      <div class="verdict-sub">Dashboard lebih intuitif, data bisa di-filter/sort/export langsung dari browser. Cocok kalau mau manage sendiri.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================================================ FIREBASE -->
+<div class="section" id="firebase">
+  <div class="section-header">
+    <div class="section-icon">🔥</div>
+    <div>
+      <div class="section-eyebrow">Opsi 1</div>
+      <div class="section-title">Setup <em>Firebase</em></div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num firebase">1</div>
+      <div class="step-body">
+        <div class="step-title">Buat Project Firebase</div>
+        <div class="step-desc">Buka <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → Login Google → Klik <strong>"Add project"</strong> → Nama bebas (misal: <em>sunago-kopi</em>) → Disable Google Analytics → Create project.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num firebase">2</div>
+      <div class="step-body">
+        <div class="step-title">Aktifkan Firestore Database</div>
+        <div class="step-desc">Di sidebar kiri → <strong>Firestore Database</strong> → Create database → Pilih <strong>"Start in test mode"</strong> → Region: <strong>asia-southeast1 (Singapore)</strong> → Enable.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num firebase">3</div>
+      <div class="step-body">
+        <div class="step-title">Aktifkan Storage</div>
+        <div class="step-desc">Di sidebar → <strong>Storage</strong> → Get started → Test mode → Next → Done. Storage untuk nyimpan file foto aslinya.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num firebase">4</div>
+      <div class="step-body">
+        <div class="step-title">Daftarkan Web App & Copy Config</div>
+        <div class="step-desc">Di sidebar → <strong>Project Settings</strong> (ikon ⚙️) → Scroll ke bawah → Klik ikon <strong>"&lt;/&gt;"</strong> → Register app → Copy <code>firebaseConfig</code>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num firebase">5</div>
+      <div class="step-body">
+        <div class="step-title">Set Security Rules Firestore</div>
+        <div class="step-desc">Firestore Database → <strong>Rules</strong> tab → Ganti dengan rules berikut → Publish:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">firestore.rules</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">// Firestore Security Rules — paste di Firebase Console</span>
+<span class="c-key">rules_version</span> = <span class="c-str">'2'</span>;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /kenangan/{doc} {
+      <span class="c-comment">// Semua orang bisa baca</span>
+      allow read: if <span class="c-val">true</span>;
+      <span class="c-comment">// Boleh insert kalau data valid</span>
+      allow create: if request.resource.data.keys()
+                      .hasAll([<span class="c-str">'name'</span>, <span class="c-str">'caption'</span>, <span class="c-str">'photoUrl'</span>, <span class="c-str">'ts'</span>])
+                    && request.resource.data.caption.size() < <span class="c-val">500</span>;
+      <span class="c-comment">// Boleh hapus (bisa diperketat nanti)</span>
+      allow delete: if <span class="c-val">true</span>;
+    }
+  }
+}</pre>
+  </div>
+
+  <div class="steps" style="margin-top:1rem">
+    <div class="step">
+      <div class="step-num firebase">6</div>
+      <div class="step-body">
+        <div class="step-title">Set Security Rules Storage</div>
+        <div class="step-desc">Storage → <strong>Rules</strong> tab → Ganti dengan rules berikut → Publish:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">storage.rules</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">// Storage Security Rules — paste di Firebase Console</span>
+<span class="c-key">rules_version</span> = <span class="c-str">'2'</span>;
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /kenangan/{filename} {
+      allow read: if <span class="c-val">true</span>;
+      <span class="c-comment">// Hanya gambar, maks 5MB</span>
+      allow write: if request.resource.size < <span class="c-val">5 * 1024 * 1024</span>
+                   && request.resource.contentType.matches(<span class="c-str">'image/.*'</span>);
+    }
+  }
+}</pre>
+  </div>
+
+  <div class="steps" style="margin-top:1rem">
+    <div class="step">
+      <div class="step-num firebase">7</div>
+      <div class="step-body">
+        <div class="step-title">Paste Config ke File HTML</div>
+        <div class="step-desc">Buka <code>versi-firebase/spot-foto.html</code> → cari bagian <code>firebaseConfig</code> → ganti semua nilai <code>GANTI_...</code> dengan config yang tadi di-copy.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">spot-foto.html — bagian yang diubah</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">// Ganti bagian ini dengan config Firebase kamu:</span>
+const <span class="c-key">firebaseConfig</span> = {
+  <span class="c-key">apiKey</span>:            <span class="c-str">"AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span>,
+  <span class="c-key">authDomain</span>:        <span class="c-str">"sunago-kopi.firebaseapp.com"</span>,
+  <span class="c-key">projectId</span>:         <span class="c-str">"sunago-kopi"</span>,
+  <span class="c-key">storageBucket</span>:     <span class="c-str">"sunago-kopi.appspot.com"</span>,
+  <span class="c-key">messagingSenderId</span>: <span class="c-str">"123456789012"</span>,
+  <span class="c-key">appId</span>:             <span class="c-str">"1:123456789012:web:abcdef123456"</span>
+};
+
+<span class="c-comment">// Ganti juga nomor WA Sunago:</span>
+const <span class="c-key">WA_NUMBER</span> = <span class="c-str">"6281234567890"</span>; <span class="c-comment">// tanpa + dan spasi</span></pre>
+  </div>
+
+  <div class="note">
+    <strong>✅ Selesai!</strong> File <code>versi-firebase/spot-foto.html</code> langsung jalan setelah config diisi. Upload ke hosting mana pun (Netlify, Vercel, cPanel, dll) — tidak perlu backend server.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================================================ SUPABASE -->
+<div class="section" id="supabase">
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <div>
+      <div class="section-eyebrow">Opsi 2</div>
+      <div class="section-title">Setup <em>Supabase</em></div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num supabase">1</div>
+      <div class="step-body">
+        <div class="step-title">Buat Akun & Project</div>
+        <div class="step-desc">Buka <a href="https://supabase.com" target="_blank">supabase.com</a> → Sign up (bisa pakai GitHub) → New project → Nama: <em>sunago</em> → Set database password (catat!) → Region: <strong>Southeast Asia (Singapore)</strong> → Create.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num supabase">2</div>
+      <div class="step-body">
+        <div class="step-title">Buat Tabel "kenangan"</div>
+        <div class="step-desc">Sidebar → <strong>Table Editor</strong> → New table → Nama: <code>kenangan</code> → Aktifkan RLS (Row Level Security) → Tambah kolom-kolom berikut:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL — bisa jalankan di Supabase SQL Editor</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">-- Jalankan ini di Supabase → SQL Editor → New query</span>
+
+<span class="c-fn">CREATE TABLE</span> kenangan (
+  id           <span class="c-key">bigserial</span>    PRIMARY KEY,
+  photo_url    <span class="c-key">text</span>         NOT NULL,
+  storage_path <span class="c-key">text</span>,
+  name         <span class="c-key">text</span>         DEFAULT <span class="c-str">'Anonim'</span>,
+  caption      <span class="c-key">text</span>,
+  ts           <span class="c-key">bigint</span>       NOT NULL,
+  created_at   <span class="c-key">timestamptz</span>  DEFAULT now()
+);
+
+<span class="c-comment">-- Aktifkan RLS</span>
+<span class="c-fn">ALTER TABLE</span> kenangan <span class="c-fn">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="c-comment">-- Policy: semua orang bisa baca & insert & hapus</span>
+<span class="c-fn">CREATE POLICY</span> <span class="c-str">"public_access"</span> ON kenangan
+  FOR ALL USING (<span class="c-val">true</span>)
+  WITH CHECK (<span class="c-val">true</span>);</pre>
+  </div>
+
+  <div class="steps" style="margin-top:1rem">
+    <div class="step">
+      <div class="step-num supabase">3</div>
+      <div class="step-body">
+        <div class="step-title">Buat Storage Bucket</div>
+        <div class="step-desc">Sidebar → <strong>Storage</strong> → New bucket → Nama: <code>kenangan</code> → Centang <strong>"Public bucket"</strong> → Save. Lalu klik bucket → Policies → Add policy:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL — Storage Policy</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">-- Jalankan di SQL Editor untuk Storage policy</span>
+<span class="c-fn">CREATE POLICY</span> <span class="c-str">"public storage access"</span>
+  ON storage.objects FOR ALL
+  USING ( bucket_id = <span class="c-str">'kenangan'</span> )
+  WITH CHECK ( bucket_id = <span class="c-str">'kenangan'</span>
+    AND octet_length(content) < <span class="c-val">5242880</span> ); <span class="c-comment">-- maks 5MB</span></pre>
+  </div>
+
+  <div class="steps" style="margin-top:1rem">
+    <div class="step">
+      <div class="step-num supabase">4</div>
+      <div class="step-body">
+        <div class="step-title">Ambil URL & Key</div>
+        <div class="step-desc">Sidebar → <strong>Settings</strong> → <strong>API</strong> → Copy <strong>Project URL</strong> dan <strong>anon public</strong> key.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num supabase">5</div>
+      <div class="step-body">
+        <div class="step-title">Paste ke File HTML</div>
+        <div class="step-desc">Buka <code>versi-supabase/spot-foto.html</code> → cari bagian config → ganti nilai <code>GANTI_...</code>:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">spot-foto.html — bagian yang diubah</span>
+      <button class="code-copy" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="c-comment">// Ganti bagian ini di versi-supabase/spot-foto.html:</span>
+const <span class="c-key">SUPABASE_URL</span> = <span class="c-str">'https://abcdefgh.supabase.co'</span>;
+const <span class="c-key">SUPABASE_KEY</span> = <span class="c-str">'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'</span>;
+
+<span class="c-comment">// Ganti juga nomor WA Sunago:</span>
+const <span class="c-key">WA_NUMBER</span> = <span class="c-str">'6281234567890'</span>; <span class="c-comment">// tanpa + dan spasi</span></pre>
+  </div>
+
+  <div class="note">
+    <strong>✅ Selesai!</strong> File <code>versi-supabase/spot-foto.html</code> langsung jalan. Tidak perlu backend server — Supabase SDK langsung dari browser.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- DEPLOY -->
+<div class="section" id="deploy">
+  <div class="section-header">
+    <div class="section-icon">🚀</div>
+    <div>
+      <div class="section-eyebrow">Langkah Terakhir</div>
+      <div class="section-title">Deploy ke <em>Hosting</em></div>
+    </div>
+  </div>
+
+  <p style="font-size:0.85rem;opacity:0.65;margin-bottom:1.5rem;font-family:'Noto Serif',serif;font-style:italic;">Setelah config diisi, website tinggal diupload ke hosting. Keduanya (Firebase & Supabase) bekerja di <strong>static hosting mana pun</strong> — tidak perlu server PHP atau Node.js.</p>
+
+  <div class="quick-ref">
+    <div class="qr-card">
+      <span class="qr-label">🟢 Netlify (Paling Mudah — Gratis)</span>
+      <div class="qr-item">Buka netlify.com → Sign up</div>
+      <div class="qr-item">Drag & drop folder sunago ke dashboard</div>
+      <div class="qr-item">Otomatis dapat URL: sunago.netlify.app</div>
+      <div class="qr-item">Update = drag & drop lagi</div>
+    </div>
+    <div class="qr-card">
+      <span class="qr-label">🔵 Vercel (Juga Gratis)</span>
+      <div class="qr-item">Buka vercel.com → Sign up</div>
+      <div class="qr-item">Import project atau drag folder</div>
+      <div class="qr-item">Otomatis dapat URL: sunago.vercel.app</div>
+      <div class="qr-item">Custom domain bisa ditambahkan</div>
+    </div>
+    <div class="qr-card">
+      <span class="qr-label">🟠 cPanel (Hosting Berbayar)</span>
+      <div class="qr-item">Login cPanel → File Manager</div>
+      <div class="qr-item">Upload isi folder sunago ke public_html</div>
+      <div class="qr-item">Akses via domain yang sudah dimiliki</div>
+      <div class="qr-item">Cocok kalau sudah punya domain .com</div>
+    </div>
+    <div class="qr-card">
+      <span class="qr-label">📁 Struktur File Final</span>
+      <div class="file-tree" style="font-size:0.72rem;padding:0.8rem;margin-top:0.3rem;">
+        <div><span class="ft-dir">sunago/</span></div>
+        <div>&nbsp;&nbsp;<span class="ft-file">index.html</span></div>
+        <div>&nbsp;&nbsp;<span class="ft-dir">css/</span></div>
+        <div>&nbsp;&nbsp;<span class="ft-dir">js/</span></div>
+        <div>&nbsp;&nbsp;<span class="ft-dir">images/</span> <span class="ft-note">1.png–5.png</span></div>
+        <div>&nbsp;&nbsp;<span class="ft-dir">spots/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-new">spot-foto.html</span> <span class="ft-note">← versi Firebase/Supabase</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note warn" style="margin-top:1.5rem">
+    <strong>⚠️ Penting:</strong> Jangan upload kedua versi sekaligus. Pilih satu — Firebase atau Supabase — rename filenya jadi <code>spot-foto.html</code> lalu taruh di folder <code>spots/</code>.
+  </div>
+
+  <div class="note info" style="margin-top:1rem">
+    <strong>💡 Ganti nomor WA:</strong> Cari teks <code>628000000000</code> di file HTML dan ganti dengan nomor WhatsApp Sunago yang benar. Format: <code>628</code> + nomor tanpa angka 0 di depan. Contoh: 0812-3456-7890 → <code>6281234567890</code>.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CARA KERJA LIMIT UPLOAD -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">🔒</div>
+    <div>
+      <div class="section-eyebrow">Sistem Keamanan</div>
+      <div class="section-title">Cara Kerja <em>Limit Upload</em></div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Alur Upload per Device</span></div>
+    <pre><span class="c-comment">Pengunjung buka spot-foto.html</span>
+        ↓
+<span class="c-comment">Cek localStorage: sudah berapa kali upload?</span>
+        ↓
+  ┌─────────────┬─────────────┐
+  │  < 2 kali   │  = 2 kali  │
+  └──────┬──────┴──────┬──────┘
+         ↓              ↓
+  Tombol UPLOAD    Tombol SLOT PENUH 🔒
+  aktif            → Modal muncul
+                   → Tombol WA / IG Sunago
+                   → Sunago konfirmasi manual
+                   → Sunago reset localStorage
+                     via devtools / admin panel</pre>
+  </div>
+
+  <div class="note">
+    <strong>📱 Cara reset slot pengunjung:</strong> Saat pengunjung minta tambah slot dan sudah dikonfirmasi, minta mereka buka browser → F12 (DevTools) → Console → ketik:<br><br>
+    <code style="background:#0d0a05;padding:0.3rem 0.6rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;">localStorage.removeItem('sunago-firebase-uploads')</code><br><br>
+    Atau untuk Supabase: <code style="background:#0d0a05;padding:0.3rem 0.6rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;">localStorage.removeItem('sunago-supabase-uploads')</code>
+  </div>
+</div>
+
+<footer>
+  <span>Sunago<em style="font-style:italic"> Database Guide</em></span>
+  <span>Firebase & Supabase · Cikampek 2025</span>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>

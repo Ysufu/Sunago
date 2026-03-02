@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spot Foto & Kenangan Sunago</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;600;700;800&family=Noto+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+  <!--
+  ============================================================
+  SUPABASE SETUP — IKUTI LANGKAH INI:
+
+  1. Buka https://supabase.com → Sign up (gratis)
+  2. Klik "New project" → isi nama (misal: sunago) & password DB
+  3. Buat TABEL:
+     - Buka "Table Editor" → New table → nama: "kenangan"
+     - Tambah kolom:
+         id          : int8, Primary Key, auto-increment
+         photo_url   : text, NOT NULL
+         storage_path: text
+         name        : text, default: 'Anonim'
+         caption     : text
+         ts          : int8, NOT NULL (timestamp millisecond)
+         created_at  : timestamptz, default: now()
+     - Enable "Row Level Security" → Tambah policy:
+         Policy name: "Allow public read and insert"
+         FOR SELECT: true
+         FOR INSERT: true
+         FOR DELETE: true
+
+  4. Buat STORAGE BUCKET:
+     - Klik "Storage" → New bucket → nama: "kenangan"
+     - Centang "Public bucket" → Save
+     - Klik bucket "kenangan" → Policies → New policy:
+         Allowed operations: SELECT, INSERT, DELETE
+         Policy definition: true (semua boleh untuk sementara)
+
+  5. Ambil Project URL dan anon key:
+     - Settings → API → copy "Project URL" dan "anon public"
+     - Paste ke variabel SUPABASE_URL dan SUPABASE_KEY di bawah
+
+  ============================================================
+  -->
+
+  <style>
+    /* Sama persis dengan versi Firebase untuk konsistensi */
+    :root{--cream:#f5ede0;--brown-mid:#5c3317;--caramel:#c8813a;--gold:#d4a853;--espresso:#1a0d05;--card-bg:rgba(36,20,8,0.9);}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--espresso);color:var(--cream);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none;}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:10000;opacity:0.5;}
+    .cursor{width:10px;height:10px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference;}
+    .cursor-ring{width:32px;height:32px;border:1.5px solid var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-11px,-11px);transition:transform 0.3s ease,width 0.25s,height 0.25s;}
+    .cursor-ring.big{width:50px;height:50px;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:linear-gradient(to bottom,rgba(26,13,5,0.97),transparent);backdrop-filter:blur(6px);}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--gold);text-decoration:none;}
+    .nav-logo em{color:var(--cream);font-style:italic;}
+    .nav-back{display:flex;align-items:center;gap:0.5rem;text-decoration:none;color:var(--cream);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;border:1px solid rgba(245,237,224,0.15);padding:0.45rem 1rem;border-radius:2px;opacity:0.65;transition:all 0.3s;}
+    .nav-back:hover{opacity:1;color:var(--gold);border-color:var(--gold);}
+    #hero{min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 5rem;}
+    .hero-slides{position:absolute;inset:0;z-index:0;}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;background-size:cover;background-position:center;}
+    .slide.active{opacity:1;}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,5,2,0.95) 0%,rgba(10,5,2,0.4) 60%,rgba(10,5,2,0.15) 100%);z-index:1;}
+    .slide-dots{position:absolute;bottom:2rem;right:3rem;display:flex;gap:0.5rem;z-index:3;}
+    .sdot{width:6px;height:6px;border-radius:50%;background:rgba(245,237,224,0.3);border:none;cursor:none;transition:all 0.3s;}
+    .sdot.on{background:var(--gold);width:20px;border-radius:3px;}
+    .hero-content{position:relative;z-index:2;}
+    .hero-eyebrow{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.8rem;margin-bottom:1.2rem;opacity:0;animation:fadeUp 0.7s 0.2s ease forwards;}
+    .hero-eyebrow::before{content:'';width:36px;height:1px;background:var(--gold);}
+    h1.hero-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,9vw,7.5rem);font-weight:900;line-height:0.95;opacity:0;animation:fadeUp 0.7s 0.4s ease forwards;}
+    h1.hero-title em{font-style:italic;color:var(--caramel);display:block;}
+    .hero-sub{max-width:440px;color:rgba(245,237,224,0.55);font-family:'Noto Serif',serif;font-style:italic;font-size:0.9rem;line-height:1.8;margin-top:1.8rem;opacity:0;animation:fadeUp 0.7s 0.6s ease forwards;}
+    .hero-ctas{display:flex;align-items:center;gap:1.5rem;margin-top:2.5rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.7s 0.8s ease forwards;}
+    .btn-gold{background:var(--gold);color:var(--espresso);padding:0.9rem 2.2rem;font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;border:none;cursor:none;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.3s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+    .btn-gold:hover{background:var(--caramel);transform:translateY(-2px);}
+    .btn-ghost-link{color:var(--cream);text-decoration:none;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;opacity:0.6;display:flex;align-items:center;gap:0.5rem;transition:all 0.3s;}
+    .btn-ghost-link:hover{opacity:1;color:var(--gold);gap:0.8rem;}
+    .ticker{overflow:hidden;white-space:nowrap;background:var(--brown-mid);padding:0.75rem 0;}
+    .ticker-inner{display:inline-flex;animation:tick 24s linear infinite;}
+    .ticker-item{display:inline-flex;align-items:center;gap:1.2rem;padding:0 2rem;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.75;}
+    .t-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;}
+    #kenangan{padding:5rem 3rem 6rem;border-top:1px solid rgba(245,237,224,0.06);}
+    .kenangan-header{max-width:1100px;margin:0 auto 2.5rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+    .sec-eyebrow{font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem;}
+    .sec-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold);opacity:0.6;}
+    .kenangan-count{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2.5rem);margin-bottom:0.3rem;}
+    .kenangan-count span{color:var(--gold);}
+    .kenangan-sub{font-size:0.78rem;opacity:0.45;font-family:'Noto Serif',serif;font-style:italic;}
+    .slot-row{display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem;font-size:0.72rem;opacity:0.6;}
+    .slot-pip{width:22px;height:6px;border-radius:3px;background:rgba(212,168,83,0.15);}
+    .slot-pip.used{background:var(--gold);}
+    .upload-trigger{display:flex;align-items:center;gap:0.7rem;background:var(--gold);color:var(--espresso);padding:0.85rem 1.8rem;font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;border:none;cursor:none;transition:all 0.3s;border-radius:2px;flex-shrink:0;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+    .upload-trigger:hover:not(:disabled){background:var(--caramel);transform:translateY(-2px);}
+    .btn-locked{display:flex;align-items:center;gap:0.6rem;background:rgba(245,237,224,0.05);color:var(--cream);border:1px solid rgba(245,237,224,0.12);padding:0.85rem 1.6rem;font-family:'Syne',sans-serif;font-size:0.72rem;letter-spacing:0.1em;border-radius:2px;cursor:none;opacity:0.6;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,5,2,0.93);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:linear-gradient(135deg,#221508,#1a0d05);border:1px solid rgba(212,168,83,0.25);border-radius:12px;padding:2.5rem;width:min(500px,92vw);transform:translateY(20px) scale(0.97);transition:transform 0.3s;position:relative;max-height:90vh;overflow-y:auto;}
+    .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+    .modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:0.3rem;}
+    .modal-sub{font-size:0.78rem;opacity:0.45;margin-bottom:2rem;font-family:'Noto Serif',serif;font-style:italic;}
+    .modal-close{position:absolute;top:1.2rem;right:1.2rem;background:none;border:none;color:var(--cream);font-size:1.1rem;cursor:none;opacity:0.5;}
+    .modal-close:hover{opacity:1;}
+    .drop-zone{border:2px dashed rgba(212,168,83,0.3);border-radius:8px;padding:2rem;text-align:center;cursor:none;transition:all 0.3s;margin-bottom:1.2rem;position:relative;}
+    .drop-zone.drag-over{border-color:var(--gold);background:rgba(212,168,83,0.05);}
+    .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;}
+    .drop-icon{font-size:2.5rem;display:block;margin-bottom:0.6rem;}
+    .drop-label{font-size:0.8rem;opacity:0.55;}
+    .drop-label strong{color:var(--gold);}
+    .photo-preview{width:100%;aspect-ratio:16/9;border-radius:6px;object-fit:cover;margin-bottom:1.2rem;display:none;border:1px solid rgba(212,168,83,0.2);}
+    .photo-preview.show{display:block;}
+    .field-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.45rem;}
+    .field-input{width:100%;background:rgba(245,237,224,0.05);border:1px solid rgba(245,237,224,0.12);border-radius:6px;color:var(--cream);padding:0.7rem 1rem;font-family:'Syne',sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.2s;margin-bottom:1.2rem;}
+    .field-input:focus{border-color:rgba(212,168,83,0.4);}
+    .field-input::placeholder{opacity:0.35;}
+    textarea.field-input{font-family:'Noto Serif',serif;font-style:italic;resize:none;}
+    .upload-progress{background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.15);border-radius:6px;padding:1rem;margin-bottom:1rem;display:none;}
+    .upload-progress.show{display:block;}
+    .progress-bar-wrap{background:rgba(245,237,224,0.08);border-radius:50px;height:6px;margin-top:0.6rem;}
+    .progress-bar{height:6px;border-radius:50px;background:var(--gold);width:0%;transition:width 0.2s;}
+    .progress-label{font-size:0.72rem;opacity:0.6;}
+    .submit-btn{width:100%;background:var(--gold);color:var(--espresso);padding:0.9rem;font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;border:none;cursor:none;border-radius:4px;transition:all 0.3s;}
+    .submit-btn:hover:not(:disabled){background:var(--caramel);}
+    .submit-btn:disabled{opacity:0.4;}
+    .modal-error{background:rgba(200,60,60,0.1);border:1px solid rgba(200,60,60,0.3);border-radius:4px;padding:0.6rem 0.9rem;font-size:0.75rem;color:#f08080;margin-bottom:1rem;display:none;}
+    .modal-error.show{display:block;}
+    .locked-center{text-align:center;padding:1rem 0;}
+    .locked-emoji{font-size:3rem;display:block;margin-bottom:1rem;}
+    .locked-title{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.6rem;}
+    .locked-desc{font-size:0.82rem;opacity:0.55;line-height:1.7;max-width:340px;margin:0 auto 1.5rem;font-family:'Noto Serif',serif;font-style:italic;}
+    .wa-btn{display:flex;align-items:center;justify-content:center;gap:0.7rem;background:#25D366;color:#fff;padding:0.85rem 2rem;font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;text-transform:uppercase;text-decoration:none;border-radius:4px;margin-bottom:0.8rem;}
+    .or-div{font-size:0.7rem;opacity:0.35;margin:0.5rem 0;text-align:center;}
+    .ig-btn{display:flex;align-items:center;justify-content:center;gap:0.7rem;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;padding:0.85rem 2rem;font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;text-transform:uppercase;text-decoration:none;border-radius:4px;}
+    .gallery-wrap{max-width:1100px;margin:0 auto;}
+    .gallery-masonry{columns:3;column-gap:1rem;}
+    .kenangan-card{break-inside:avoid;margin-bottom:1rem;background:var(--card-bg);border:1px solid rgba(245,237,224,0.06);border-radius:8px;overflow:hidden;transition:all 0.35s;position:relative;}
+    .kenangan-card:hover{border-color:rgba(212,168,83,0.22);box-shadow:0 16px 40px rgba(0,0,0,0.45);transform:translateY(-3px);}
+    .kc-photo{width:100%;display:block;object-fit:cover;max-height:420px;transition:transform 0.4s;}
+    .kenangan-card:hover .kc-photo{transform:scale(1.02);}
+    .kc-body{padding:1rem 1.2rem 1.3rem;}
+    .kc-name{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
+    .kc-name::before{content:'';width:16px;height:1px;background:var(--gold);opacity:0.5;}
+    .kc-caption{font-family:'Noto Serif',serif;font-style:italic;font-size:0.83rem;line-height:1.65;opacity:0.7;}
+    .kc-date{font-size:0.6rem;opacity:0.3;margin-top:0.6rem;display:block;}
+    .kc-delete{position:absolute;top:0.7rem;right:0.7rem;background:rgba(0,0,0,0.65);border:none;color:rgba(245,237,224,0.6);width:28px;height:28px;border-radius:50%;font-size:0.75rem;cursor:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;}
+    .kenangan-card:hover .kc-delete{opacity:1;}
+    .kc-delete:hover{color:var(--cream);background:rgba(180,60,60,0.75);}
+    .empty-state{text-align:center;padding:5rem 2rem;opacity:0.35;}
+    .empty-state .es-emoji{font-size:4rem;display:block;margin-bottom:1rem;}
+    .empty-state p{font-family:'Noto Serif',serif;font-style:italic;}
+    .loading-spinner{display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:4rem;}
+    .loading-spinner span{width:8px;height:8px;background:var(--gold);border-radius:50%;opacity:0.4;animation:bounce 1s ease-in-out infinite;}
+    .loading-spinner span:nth-child(2){animation-delay:0.15s;}
+    .loading-spinner span:nth-child(3){animation-delay:0.3s;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(16px);background:linear-gradient(135deg,#5c3317,#2c1a0e);border:1px solid rgba(212,168,83,0.3);color:var(--cream);padding:0.65rem 1.5rem;font-size:0.78rem;border-radius:50px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5);transition:all 0.3s;opacity:0;white-space:nowrap;pointer-events:none;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .scroll-top{position:fixed;bottom:2rem;right:2rem;width:40px;height:40px;background:var(--gold);color:var(--espresso);border:none;font-size:1rem;cursor:none;border-radius:2px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s,transform 0.3s;z-index:100;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+    .scroll-top.vis{opacity:1;}
+    footer{border-top:1px solid rgba(245,237,224,0.06);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .f-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--gold);}
+    .f-logo em{color:var(--cream);font-style:italic;font-size:0.9rem;}
+    .f-copy{font-size:0.65rem;opacity:0.3;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-8px);opacity:1}}
+    @media(max-width:900px){nav{padding:1.1rem 1.5rem;}#kenangan{padding:4rem 1.5rem 5rem;}.gallery-masonry{columns:2;}.kenangan-header{flex-direction:column;align-items:flex-start;}footer{padding:1.5rem;}}
+    @media(max-width:600px){.gallery-masonry{columns:1;}.hero-ctas{flex-direction:column;}}
+    @media(pointer:coarse){.cursor,.cursor-ring{display:none;}body{cursor:auto;}button,a,input,.drop-zone{cursor:pointer;}.kc-delete{opacity:1;}}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="../index.html" class="nav-logo">Sunago<em>.</em></a>
+  <a href="../index.html" class="nav-back">← Kembali</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-slides">
+    <div class="slide active" style="background-image:url('../images/4.png')"></div>
+    <div class="slide" style="background-image:url('../images/3.png')"></div>
+    <div class="slide" style="background-image:url('../images/1.png')"></div>
+    <div class="slide" style="background-image:url('../images/5.png')"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="slide-dots" id="slideDots">
+    <button class="sdot on"></button><button class="sdot"></button>
+    <button class="sdot"></button><button class="sdot"></button>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Spot Foto · Warung Kopi Sunago</div>
+    <h1 class="hero-title">Satu Spot,<em>Banyak Cerita.</em></h1>
+    <p class="hero-sub">Penuh karakter, hangat, dan punya vibe tersendiri — setiap sudut Sunago siap jadi latar foto terbaikmu.</p>
+    <div class="hero-ctas">
+      <a href="#kenangan" class="btn-gold">📸 Kenangan Sunago</a>
+      <a href="../index.html#gallery" class="btn-ghost-link">Lihat Gallery <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span class="t-dot"></span>Indoor Aesthetic</div>
+    <div class="ticker-item"><span class="t-dot"></span>Best Foto Spot</div>
+    <div class="ticker-item"><span class="t-dot"></span>Tag @warungkopi.sunago</div>
+    <div class="ticker-item"><span class="t-dot"></span>#SunagoCikampek</div>
+    <div class="ticker-item"><span class="t-dot"></span>Upload Fotomu!</div>
+    <div class="ticker-item"><span class="t-dot"></span>Indoor Aesthetic</div>
+    <div class="ticker-item"><span class="t-dot"></span>Best Foto Spot</div>
+    <div class="ticker-item"><span class="t-dot"></span>Tag @warungkopi.sunago</div>
+    <div class="ticker-item"><span class="t-dot"></span>#SunagoCikampek</div>
+    <div class="ticker-item"><span class="t-dot"></span>Upload Fotomu!</div>
+  </div>
+</div>
+
+<section id="kenangan">
+  <div class="kenangan-header">
+    <div>
+      <div class="sec-eyebrow">Komunitas</div>
+      <h2 class="kenangan-count">Kenangan <span id="photoCount">...</span> Orang</h2>
+      <p class="kenangan-sub">Foto-foto dari mereka yang pernah singgah di Sunago.</p>
+      <div class="slot-row">
+        <span>Slot kamu:</span>
+        <div class="slot-pip" id="pip1"></div>
+        <div class="slot-pip" id="pip2"></div>
+        <span id="slotLabel"></span>
+      </div>
+    </div>
+    <div id="uploadBtnWrap"></div>
+  </div>
+  <div class="gallery-wrap">
+    <div class="gallery-masonry" id="galleryGrid">
+      <div class="loading-spinner"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <button class="modal-close" id="closeUpload">✕</button>
+    <div class="modal-title">Tambah Kenanganmu ✨</div>
+    <p class="modal-sub">Upload fotomu dan ceritakan momennya.</p>
+    <img class="photo-preview" id="photoPreview" alt="preview">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept="image/*">
+      <span class="drop-icon">📷</span>
+      <p class="drop-label">Klik atau <strong>drag foto</strong> ke sini<br><span style="font-size:0.7rem;opacity:0.4">JPG, PNG, WEBP · Maks 5MB</span></p>
+    </div>
+    <label class="field-label">Namamu</label>
+    <input type="text" id="nameInput" class="field-input" placeholder="Nama atau inisial...">
+    <label class="field-label">Ceritamu</label>
+    <textarea id="captionInput" class="field-input" rows="3" placeholder="Tulis caption atau cerita singkat..."></textarea>
+    <div class="upload-progress" id="uploadProgress">
+      <div class="progress-label">Mengupload foto... <span id="progressPct">0%</span></div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    </div>
+    <div class="modal-error" id="modalError"></div>
+    <button class="submit-btn" id="submitBtn" disabled>Upload Kenangan</button>
+  </div>
+</div>
+
+<!-- LOCKED MODAL -->
+<div class="modal-overlay" id="lockedModal">
+  <div class="modal">
+    <button class="modal-close" id="closeLocked">✕</button>
+    <div class="locked-center">
+      <span class="locked-emoji">🔒</span>
+      <div class="locked-title">Slot Upload Habis</div>
+      <p class="locked-desc">Setiap device dibatasi <strong>2 upload</strong>. Mau nambah slot? Hubungi Sunago langsung!</p>
+      <a id="waLink" href="#" target="_blank" class="wa-btn"><span>💬</span> Chat WhatsApp Sunago</a>
+      <div class="or-div">— atau —</div>
+      <a href="https://www.instagram.com/warungkopi.sunago" target="_blank" class="ig-btn"><span>📸</span> DM @warungkopi.sunago</a>
+      <p style="font-size:0.7rem;opacity:0.3;margin-top:1rem;font-style:italic;">Pihak warung akan konfirmasi & aktifkan slot tambahan.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top" id="scrollTop">↑</button>
+<footer>
+  <div class="f-logo">Sunago<em>.</em></div>
+  <span class="f-copy">© 2025 Warung Kopi Sunago · Cikampek</span>
+</footer>
+
+<!-- ============================================================
+  SUPABASE — pakai CDN, tidak perlu install apapun
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   ⚙️  KONFIGURASI — GANTI DENGAN MILIKMU!
+   Ambil dari: Supabase Dashboard → Settings → API
+============================================================ */
+const SUPABASE_URL = 'https://atnsalwkurrgbkwcctyn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_6TqLpiFgbeg6WXIknfunTA_E3aNAmet';
+const WA_NUMBER    = '628993152910'; // ← ganti nomor WA Sunago
+const MAX_UPLOAD   = 2;
+const LS_KEY       = 'sunago-supabase-uploads';
+const BUCKET       = 'kenangan'; // nama bucket storage
+const TABLE        = 'kenangan'; // nama tabel
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ============================================================
+   CURSOR
+============================================================ */
+const cur  = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cur.style.transform  = `translate(${e.clientX-5}px,${e.clientY-5}px)`;
+  setTimeout(() => ring.style.transform = `translate(${e.clientX-16}px,${e.clientY-16}px)`, 75);
+});
+document.querySelectorAll('a,button,.drop-zone').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('big'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+});
+
+/* ============================================================
+   SLIDESHOW
+============================================================ */
+const slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.sdot');
+let curSlide = 0, timer;
+function goSlide(n) {
+  slides[curSlide].classList.remove('active'); dots[curSlide].classList.remove('on');
+  curSlide = (n+slides.length)%slides.length;
+  slides[curSlide].classList.add('active'); dots[curSlide].classList.add('on');
+}
+dots.forEach((d,i) => d.addEventListener('click', () => { goSlide(i); reset(); }));
+function reset() { clearInterval(timer); timer = setInterval(() => goSlide(curSlide+1), 4500); }
+reset();
+
+/* ============================================================
+   SCROLL
+============================================================ */
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => scrollBtn.classList.toggle('vis', window.scrollY > 400));
+scrollBtn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+
+/* ============================================================
+   TOAST
+============================================================ */
+function toast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* ============================================================
+   DEVICE TRACKING
+============================================================ */
+function getUsed()      { return parseInt(localStorage.getItem(LS_KEY)||'0',10); }
+function addUsed()      { localStorage.setItem(LS_KEY,(getUsed()+1).toString()); }
+function getRemaining() { return Math.max(0, MAX_UPLOAD - getUsed()); }
+
+/* ============================================================
+   SLOT UI
+============================================================ */
+function renderSlotUI() {
+  const used = getUsed(), rem = getRemaining();
+  document.getElementById('pip1').className = 'slot-pip'+(used>=1?' used':'');
+  document.getElementById('pip2').className = 'slot-pip'+(used>=2?' used':'');
+  document.getElementById('slotLabel').textContent = rem>0 ? `${rem} tersisa` : 'Penuh';
+  const wrap = document.getElementById('uploadBtnWrap');
+  if (rem > 0) {
+    wrap.innerHTML = `<button class="upload-trigger" id="openUpload">📸 Upload Fotomu</button>`;
+    document.getElementById('openUpload').addEventListener('click', openUploadModal);
+  } else {
+    wrap.innerHTML = `<button class="btn-locked" id="openLocked">🔒 Slot Penuh</button>`;
+    document.getElementById('openLocked').addEventListener('click', openLockedModal);
+  }
+}
+
+/* ============================================================
+   LOAD & RENDER GALLERY — dari Supabase
+============================================================ */
+function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+}
+
+async function loadAndRender() {
+  const { data, error } = await sb.from(TABLE).select('*').order('ts', {ascending:false});
+  if (error) { console.error(error); return; }
+  const grid = document.getElementById('galleryGrid');
+  document.getElementById('photoCount').textContent = data.length;
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="es-emoji">📸</span><p>Belum ada kenangan.<br>Jadilah yang pertama!</p></div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  data.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'kenangan-card';
+    card.innerHTML = `
+      <button class="kc-delete" data-id="${p.id}" data-path="${escH(p.storage_path||'')}">✕</button>
+      <img class="kc-photo" src="${escH(p.photo_url)}" alt="kenangan" loading="lazy">
+      <div class="kc-body">
+        <div class="kc-name">${escH(p.name||'Anonim')}</div>
+        <div class="kc-caption">${escH(p.caption)||'<em style="opacity:0.35">Tanpa caption</em>'}</div>
+        <span class="kc-date">${fmtDate(p.ts)}</span>
+      </div>`;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('.kc-delete').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm('Hapus foto ini?')) return;
+      await sb.from(TABLE).delete().eq('id', btn.dataset.id);
+      if (btn.dataset.path) await sb.storage.from(BUCKET).remove([btn.dataset.path]).catch(()=>{});
+      toast('🗑️ Foto dihapus'); loadAndRender();
+    });
+  });
+}
+
+/* Realtime subscription — auto refresh saat ada foto baru */
+sb.channel('kenangan-changes')
+  .on('postgres_changes', {event:'*', schema:'public', table:TABLE}, () => loadAndRender())
+  .subscribe();
+
+/* ============================================================
+   MODAL
+============================================================ */
+let selectedFile = null;
+const uploadModal = document.getElementById('uploadModal');
+const lockedModal = document.getElementById('lockedModal');
+
+function openUploadModal() {
+  if (getRemaining()<=0) { openLockedModal(); return; }
+  uploadModal.classList.add('open'); document.body.style.overflow='hidden';
+}
+function openLockedModal() {
+  const msg = encodeURIComponent('Halo Sunago! Saya mau minta tambah slot upload foto di website kenangan Sunago 🙏');
+  document.getElementById('waLink').href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+  lockedModal.classList.add('open'); document.body.style.overflow='hidden';
+}
+function closeAll() {
+  [uploadModal,lockedModal].forEach(m => m.classList.remove('open'));
+  document.body.style.overflow=''; resetForm();
+}
+function resetForm() {
+  selectedFile=null; document.getElementById('fileInput').value='';
+  const prev=document.getElementById('photoPreview'); prev.src=''; prev.classList.remove('show');
+  document.getElementById('nameInput').value=''; document.getElementById('captionInput').value='';
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('modalError').classList.remove('show');
+  document.getElementById('dropZone').style.display='';
+  document.getElementById('uploadProgress').classList.remove('show');
+  document.getElementById('progressBar').style.width='0%';
+}
+function showErr(msg) { const e=document.getElementById('modalError'); e.textContent=msg; e.classList.add('show'); }
+
+document.getElementById('closeUpload').addEventListener('click', closeAll);
+document.getElementById('closeLocked').addEventListener('click', closeAll);
+uploadModal.addEventListener('click', e => { if(e.target===uploadModal) closeAll(); });
+lockedModal.addEventListener('click', e => { if(e.target===lockedModal) closeAll(); });
+
+function handleFile(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showErr('File harus gambar.'); return; }
+  if (file.size > 5*1024*1024) { showErr('Maks 5MB.'); return; }
+  document.getElementById('modalError').classList.remove('show');
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev=document.getElementById('photoPreview');
+    prev.src=e.target.result; prev.classList.add('show');
+    document.getElementById('dropZone').style.display='none';
+    document.getElementById('submitBtn').disabled=false;
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('fileInput').addEventListener('change', e => handleFile(e.target.files[0]));
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('drag-over');});
+dz.addEventListener('dragleave', ()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e=>{e.preventDefault();dz.classList.remove('drag-over');handleFile(e.dataTransfer.files[0]);});
+
+/* SUBMIT → Supabase Storage → Supabase DB */
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  if (!selectedFile || getRemaining()<=0) return;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='Mengupload...';
+  document.getElementById('uploadProgress').classList.add('show');
+
+  const storagePath = `photos/${Date.now()}_${selectedFile.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+
+  // Simulasi progress (Supabase tidak ada progress event)
+  let prog = 0;
+  const progInterval = setInterval(() => {
+    prog = Math.min(prog+8, 85);
+    document.getElementById('progressBar').style.width = prog+'%';
+    document.getElementById('progressPct').textContent  = prog+'%';
+  }, 200);
+
+  try {
+    // 1. Upload ke Storage
+    const { error: storErr } = await sb.storage.from(BUCKET).upload(storagePath, selectedFile, {
+      contentType: selectedFile.type, upsert: false
+    });
+    if (storErr) throw storErr;
+
+    // 2. Ambil public URL
+    const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(storagePath);
+    const photoUrl = urlData.publicUrl;
+
+    // 3. Simpan ke Firestore
+    const { error: dbErr } = await sb.from(TABLE).insert({
+      photo_url:    photoUrl,
+      storage_path: storagePath,
+      name:         document.getElementById('nameInput').value.trim() || 'Anonim',
+      caption:      document.getElementById('captionInput').value.trim(),
+      ts:           Date.now()
+    });
+    if (dbErr) throw dbErr;
+
+    clearInterval(progInterval);
+    document.getElementById('progressBar').style.width='100%';
+    document.getElementById('progressPct').textContent='100%';
+
+    addUsed(); renderSlotUI();
+    setTimeout(() => {
+      closeAll(); toast('🎉 Kenanganmu berhasil ditambahkan!');
+      document.getElementById('kenangan').scrollIntoView({behavior:'smooth'});
+    }, 400);
+
+  } catch(err) {
+    clearInterval(progInterval);
+    showErr('Upload gagal: '+(err.message||'Coba lagi'));
+    btn.disabled=false; btn.textContent='Upload Kenangan';
+    document.getElementById('uploadProgress').classList.remove('show');
+  }
+});
+
+/* INIT */
+loadAndRender();
+renderSlotUI();
+</script>
+</body>
+</html>
