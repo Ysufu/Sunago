@@ -1,6 +1,6 @@
 /* ============================================
    WARUNG KOPI SUNAGO - agent.js
-   AI Agent "Suna" powered by OpenRouter API
+   AI Agent "Suna" powered by Yuszx
 ============================================ */
 
 const SUNAGO_SYSTEM_PROMPT = `Kamu adalah Suna, asisten AI dari Warung Kopi Sunago di Cikampek, Karawang, Jawa Barat.
@@ -66,11 +66,11 @@ PANDUAN MENJAWAB:
 - Selalu tutup dengan hangat dan mengundang mereka mampir ke Sunago`;
 
 /* ============================================
-   CONFIG
+   CONFIG 
 ============================================ */
 
-const OPENROUTER_API_KEY = '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'; // ← Ganti key lo di sini
-const OPENROUTER_MODEL   = 'anthropic/claude-haiku-4';  // model gratis OpenRouter
+const GROQ_API_KEY = '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'; 
+const GROQ_MODEL   = 'llama-3.3-70b-versatile';
 
 /* ============================================
    STATE & DOM
@@ -78,13 +78,13 @@ const OPENROUTER_MODEL   = 'anthropic/claude-haiku-4';  // model gratis OpenRout
 
 const agentState = { isOpen: false, isLoading: false, messages: [] };
 
-const aiToggle    = document.getElementById('aiToggle');
-const aiPanel     = document.getElementById('aiPanel');
-const aiClose     = document.getElementById('aiClose');
-const aiMessages  = document.getElementById('aiMessages');
-const aiInput     = document.getElementById('aiInput');
-const aiSend      = document.getElementById('aiSend');
-const aiTyping    = document.getElementById('aiTyping');
+const aiToggle     = document.getElementById('aiToggle');
+const aiPanel      = document.getElementById('aiPanel');
+const aiClose      = document.getElementById('aiClose');
+const aiMessages   = document.getElementById('aiMessages');
+const aiInput      = document.getElementById('aiInput');
+const aiSend       = document.getElementById('aiSend');
+const aiTyping     = document.getElementById('aiTyping');
 const quickReplies = document.getElementById('quickReplies');
 
 /* ============================================
@@ -135,7 +135,7 @@ function showTyping() { aiTyping.style.display = 'flex'; scrollChat(); }
 function hideTyping() { aiTyping.style.display = 'none'; }
 
 /* ============================================
-   CALL OPENROUTER API
+   CALL GROQ API
 ============================================ */
 
 async function callClaude(userMessage) {
@@ -147,16 +147,14 @@ async function callClaude(userMessage) {
   showTyping();
 
   try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Warung Kopi Sunago',
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
+        model: GROQ_MODEL,
         max_tokens: 1000,
         messages: [
           { role: 'system', content: SUNAGO_SYSTEM_PROMPT },
